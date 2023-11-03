@@ -16,7 +16,6 @@ export class App extends Component {
   };
 
   addContact = newContact => {
-    const { contacts } = this.state;
     const { name, number } = newContact;
     const isExist = this.isInPhonebook(name);
     if (isExist) {
@@ -28,14 +27,31 @@ export class App extends Component {
       id: nanoid(),
       number: number,
     };
-    this.setState({ contacts: [...contacts, contact] });
+    this.setState(prevState => ({contacts:[...prevState.contacts, contact]}),
+    () => {
+      this.updateFilter();
+    }
+  );
+
+
   };
 
-  deleteContact = e => {
-    const { contacts } = this.state;
-    const id = e.target.closest('li').id;
-    const contactsAfterDelete = contacts.filter(contact => contact.id !== id);
-    this.setState({ contacts: contactsAfterDelete });
+  deleteContact = (id) => {
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts].filter(contact => contact.id !== id)
+    }), () => {
+      this.updateFilter();
+    });
+  };
+
+  updateFilter = () => {
+    const { filter, contacts } = this.state;
+    const filteredContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
+    if (filteredContacts.length === 0) {
+      this.setState({ filter: '' });
+    }
   };
 
   searchContact = e => {
