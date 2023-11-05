@@ -28,10 +28,7 @@ export class App extends Component {
       number: number,
     };
     this.setState(prevState => ({contacts:[...prevState.contacts, contact]}),
-    () => {
-      this.updateFilter();
-    }
-  );
+    );
 
 
   };
@@ -39,19 +36,14 @@ export class App extends Component {
   deleteContact = (id) => {
     this.setState(prevState => ({
       contacts: [...prevState.contacts].filter(contact => contact.id !== id)
-    }), () => {
-      this.updateFilter();
-    });
+    }));
   };
 
   updateFilter = () => {
     const { filter, contacts } = this.state;
-    const filteredContacts = contacts.filter(contact =>
+    contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
-    if (filteredContacts.length === 0) {
-      this.setState({ filter: '' });
-    }
   };
 
   searchContact = e => {
@@ -81,7 +73,7 @@ export class App extends Component {
         <h1 className="phonebookTitle">Phonebook</h1>
         <ContactForm onAddContact={this.addContact}></ContactForm>
         <h2 className="contactsTitle">Contacts</h2>
-        {this.state.contacts.length > 1 && (
+        {(this.state.contacts.length > 1 || filter) && (
           <SearchFilter
             filter={filter}
             onHandleChange={this.searchContact}
